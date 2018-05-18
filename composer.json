@@ -7,5 +7,10 @@
             "email": "lishu@yilu.co"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "YiluTech\\Passport\\": "src/"
+        }
+    }
 }
