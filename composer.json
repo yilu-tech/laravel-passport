@@ -1,0 +1,11 @@
+{
+    "name": "yilu-tech/laravel-passport",
+    "description": "定制Passport",
+    "authors": [
+        {
+            "name": "lishu",
+            "email": "lishu@yilu.co"
+        }
+    ],
+    "require": {}
+}
