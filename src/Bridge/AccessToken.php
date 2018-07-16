@@ -19,17 +19,29 @@ class AccessToken extends BaseAccessToken
      */
     public function convertToJWT(CryptKey $privateKey)
     {
-        return (new Builder())
-            ->setAudience($this->getClient()->getIdentifier())
+        $builder = new Builder();
+        $builder->setAudience($this->getClient()->getIdentifier())
             ->setId($this->getIdentifier(), true)
             ->setIssuedAt(time())
             ->setNotBefore(time())
             ->setExpiration($this->getExpiryDateTime()->getTimestamp())
             ->setSubject($this->getUserIdentifier())
-            ->set('scopes', $this->getScopes())
-            ->set('authType', 'staff')
-            ->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
+            ->set('scopes', $this->getScopes());
+
+        if(config('auth.issuer')){
+            $builder->setIssuer(config('auth.issuer'));
+        }
+
+        foreach (config('auth.payload') as $key => $item){
+            if(is_callable($item)){
+                $value = $item($this);
+            }
+            $builder->set($key,$value);
+        }
+
+        return $builder->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
             ->getToken();
+
     }
 
 }
