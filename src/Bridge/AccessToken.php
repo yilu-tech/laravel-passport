@@ -31,12 +31,13 @@ class AccessToken extends BaseAccessToken
         if(config('auth.issuer')){
             $builder->setIssuer(config('auth.issuer'));
         }
-
-        foreach (config('auth.payload') as $key => $item){
-            if(is_callable($item)){
-                $value = $item($this);
+        if(config('auth.payload')){
+            foreach (config('auth.payload') as $key => $item){ //todo::目前直接闭包在配置文件，导致配置文件不能缓存，需要
+                if(is_callable($item)){
+                    $value = $item($this);
+                }
+                $builder->set($key,$value);
             }
-            $builder->set($key,$value);
         }
 
         return $builder->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
